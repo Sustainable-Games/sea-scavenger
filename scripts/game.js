@@ -78,9 +78,6 @@ async function getData(fileName) {
 // Object for plastics data derived from the Integrated Ocean Plastics dataset.
 var plasticsData;
 
-// Object for plastics data derived from Top 10 Ocean Plastics dataset.
-var top10plastics;
-
 // Object for display name lookup from plastics type keys.
 var plasticsKeyToDisplayName;
 
@@ -103,7 +100,6 @@ var productsKeyToImageLink;
 // Load data files and any other actions needed to initialize gameplay.
 async function initGame() {
     plasticsData = await getData('data/plastics-test.json');
-    top10plastics = await getData('data/top-10-plastics-by-country-test.json');
     plasticsKeyToDisplayName = await getData('data/plastics-key-to-display-name.json');
     productsKeyToDisplayName = await getData('data/products-key-to-display-name.json');
     countryKeyToDisplayName = await getData('data/countries-key-to-display-name.json');
