@@ -8,7 +8,7 @@
 
 // Set this constant to true to select debug code.
 // (Inelegant JavaScript kludge for the lack of conditional compilation.)
-const DEBUG = false;
+const DEBUG = true;
 
 /*** Game variables ***/
 
@@ -107,6 +107,18 @@ async function initGame() {
     productsKeyToImageLink = await getData('data/products-key-to-image-link.json');
     if (DEBUG === true) {
         console.log('initGame complete');
+    }
+}
+
+// resetGame
+// Reset game when the player chooses to play again after the end of a game.
+async function resetGame() {
+    plasticsData = await getData('data/plastics-test.json');
+    for (const plastic in plasticsCollected) {
+        plasticsCollected[plastic] = 0;
+    }
+    if (DEBUG === true) {
+        console.log('resetGame complete');
     }
 }
 
@@ -311,15 +323,6 @@ function hidePlayAgainScreen() {
     playAgainScreen.style.display = 'none';
 }
 
-// clearGameStats
-// Clear all game variables to enable a new game to be played.
-function clearGameStats() {
-    // TODO: Fix function to clear plasticsCollected totals.
-    for (const plastic in plasticsCollected) {
-        plasticsCollected[plastic] = 0;
-    }
-}
-
 var creditScreen = document.getElementById('creditscreen');
 
 // displayCreditScreen
@@ -438,7 +441,7 @@ confirmNoButton.addEventListener('click', event => {
 var playAgainYesButton = document.getElementById('play-again-yes-button');
 playAgainYesButton.addEventListener('click', event => {
     hidePlayAgainScreen();
-    clearGameStats();
+    resetGame();
     generateMission();
     displayMissionScreen();
 });
