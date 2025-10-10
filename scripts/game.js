@@ -99,13 +99,14 @@ var productsKeyToImageLink;
 // initGame
 // Load data files and any other actions needed to initialize gameplay.
 async function initGame() {
-    plasticsData = await getData('data/plastics-test.json');
+    plasticsData = await getData('data/plastics.json');
     plasticsKeyToDisplayName = await getData('data/plastics-key-to-display-name.json');
     productsKeyToDisplayName = await getData('data/products-key-to-display-name.json');
     countryKeyToDisplayName = await getData('data/countries-key-to-display-name.json');
     plasticsKeyToImageLink = await getData('data/plastics-key-to-image-link.json');
     productsKeyToImageLink = await getData('data/products-key-to-image-link.json');
     if (DEBUG === true) {
+        console.log('plasticsData = ', plasticsData);
         console.log('initGame complete');
     }
 }
@@ -113,11 +114,12 @@ async function initGame() {
 // resetGame
 // Reset game when the player chooses to play again after the end of a game.
 async function resetGame() {
-    plasticsData = await getData('data/plastics-test.json');
+    plasticsData = await getData('data/plastics.json');
     for (const plastic in plasticsCollected) {
         plasticsCollected[plastic] = 0;
     }
     if (DEBUG === true) {
+        console.log('plasticsData = ', plasticsData);
         console.log('resetGame complete');
     }
 }
@@ -146,33 +148,73 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+// generateIndices
+// A helper function to generate a randomized array of unique indices up to
+// the designated array size and number of indices to populate the array
+// (which may not necessarily be equal). 
+// The function will return an array of the designated size populated with 
+// the designated number of indices with null values at the end of the array
+// for any difference between the array size and the number of indices.
+// For example, if the arraySize = 6 and the numIndices = 4, the last two
+// elements of the returned array will be null values.
+function generateIndices(arraySize, numIndices) {
+    const indexArray = Array(arraySize).fill(null)
+    let i = 0;
+    // Fill first half of array with indices from the lower half of index
+    // values.
+    while (i < Math.ceil(arraySize / 2) && i < Math.ceil(numIndices / 2)) {
+        let arrayIndex = getRandomInt(Math.ceil(numIndices / 2));
+        if (!indexArray.includes(arrayIndex)) {
+            indexArray[i] = arrayIndex;
+            i++;
+        }
+    }
+    // Fill second half of array (if there is one) with values from the upper
+    // half of index values.
+    while (i < arraySize && i < numIndices) {
+        let arrayIndex = getRandomInt(Math.floor(numIndices / 2)) + Math.ceil(numIndices / 2);
+        if (!indexArray.includes(arrayIndex)) {
+            indexArray[i] = arrayIndex;
+            i++;
+        }
+    }
+    const nullElements = indexArray.filter(item => item === null).length;
+    for (let i = indexArray.length - (nullElements + 1); i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indexArray[i], indexArray[j]] = [indexArray[j], indexArray[i]];
+    }
+    if (DEBUG === true) {
+        console.log('indexArray = ', indexArray);
+    }
+    return indexArray;
+}
+
 // generateMission
 // Generate a mission for the player to complete.
 // The mission will consist of the key to a plastic type to be collected, the 
 // number of pieces to be collected, a the key to a product to be made from the 
-// collected plastic, and keys to six countries to collect the plastic from. Some 
-// of the countries will have a high likelihood of being able to achieve the 
-// mission and the others will have a low likelihood, as determined by parsing 
-// the plastics data.
+// collected plastic, and keys to six countries to collect the plastic from.
+// Some of the countries will have a high likelihood of being able to achieve
+// the mission and the others will have a low likelihood, as determined by
+// parsing the plastics data.
 function generateMission () {
-    console.log('Generating mission.');
-    // TODO: Logic for populating the mission object.
-    mission.plasticsIndex = 0;
+    mission.plasticsIndex = getRandomInt(plasticsData.length);
     mission.plasticKey = plasticsData[mission.plasticsIndex].plasticKey;
     mission.numPieces = plasticsData[mission.plasticsIndex].medianCount;
-    mission.productKey = plasticsData[mission.plasticsIndex].productKeys[17];
-    mission.countries.country1 = plasticsData[mission.plasticsIndex].countries[0].countryKey;
-    mission.plasticsCount.country1 = plasticsData[mission.plasticsIndex].countries[0].count;
-    mission.countries.country2 = plasticsData[mission.plasticsIndex].countries[1].countryKey;
-    mission.plasticsCount.country2 = plasticsData[mission.plasticsIndex].countries[1].count;
-    mission.countries.country3 = plasticsData[mission.plasticsIndex].countries[2].countryKey;
-    mission.plasticsCount.country3 = plasticsData[mission.plasticsIndex].countries[2].count;
-    mission.countries.country4 = plasticsData[mission.plasticsIndex].countries[10].countryKey;
-    mission.plasticsCount.country4 = plasticsData[mission.plasticsIndex].countries[10].count;
-    mission.countries.country5 = plasticsData[mission.plasticsIndex].countries[11].countryKey;
-    mission.plasticsCount.country5 = plasticsData[mission.plasticsIndex].countries[11].count;
-    mission.countries.country6 = plasticsData[mission.plasticsIndex].countries[19].countryKey;
-    mission.plasticsCount.country6 = plasticsData[mission.plasticsIndex].countries[19].count;
+    mission.productKey = plasticsData[mission.plasticsIndex].productKeys[getRandomInt(plasticsData[mission.plasticsIndex].productKeys.length)];
+    const countryIndices = generateIndices(6, plasticsData[mission.plasticsIndex].countries.length);
+    mission.countries.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].countryKey;
+    mission.plasticsCount.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].count;
+    mission.countries.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].countryKey;
+    mission.plasticsCount.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].count;
+    mission.countries.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].countryKey;
+    mission.plasticsCount.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].count;
+    mission.countries.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].countryKey;
+    mission.plasticsCount.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].count;
+    mission.countries.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].countryKey;
+    mission.plasticsCount.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].count;
+    mission.countries.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].countryKey;
+    mission.plasticsCount.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].count;
 }
 
 var missionScreen = document.getElementById('missionscreen');
