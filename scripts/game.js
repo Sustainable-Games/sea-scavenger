@@ -16,28 +16,28 @@ const DEBUG = true;
 // recovered in the missions. The properties are the field names from the 
 // Combined Data Set contained in the CSV or JSON data file.
 var plasticsCollected = {
-    Buckets: 0,
-    CigaretteButts: 0,
-    Crates: 0,
-    Earbuds: 0,
-    FishingLine: 0,
-    FishingNets: 0,
-    Floats: 0,
-    FoamFoodContainers: 0,
-    FoamPlatesOrCups: 0,
-    NylonRope: 0,
-    PlasticBags: 0,
-    PlasticBeverageBottles: 0,
-    PlasticBottleCaps: 0,
-    PlasticDrinkingStraws: 0,
-    PlasticFoodContainers: 0,
-    PlasticLighters: 0,
-    PlasticPersonalCareProducts: 0,
-    PlasticPlatesOrCups: 0,
-    PlasticRings: 0,
-    PlasticSheet: 0,
-    PlasticStraps: 0,
-    WrappersOrLabels: 0
+    buckets: 0,
+    cigaretteButts: 0,
+    crates: 0,
+    earbuds: 0,
+    fishingLine: 0,
+    fishingNets: 0,
+    floats: 0,
+    foamFoodContainers: 0,
+    foamPlatesOrCups: 0,
+    nylonRope: 0,
+    plasticBags: 0,
+    plasticBeverageBottles: 0,
+    plasticBottleCaps: 0,
+    plasticDrinkingStraws: 0,
+    plasticFoodContainers: 0,
+    plasticLighters: 0,
+    plasticPersonalCareProducts: 0,
+    plasticPlatesOrCups: 0,
+    plasticRings: 0,
+    plasticSheet: 0,
+    plasticStraps: 0,
+    wrappersOrLabels: 0
 };
 
 // Mission is an object that is populated by the generateMission function.
@@ -295,7 +295,11 @@ async function executeMission(missionString) {
     document.getElementById('execution-plastic-type').textContent = plasticsKeyToDisplayName[mission.plasticKey];
     document.getElementById('execution-piece-count').textContent = retrievedCount;
     // TODO: Need a lookup table from mission.plasticType to keys in plasticsCollected.
-    plasticsCollected.PlasticBeverageBottles += retrievedCount;
+    console.log(mission.plasticKey);
+    console.log(typeof(mission.plasticKey));
+    console.log(plasticsCollected[mission.plasticKey]);
+    plasticsCollected[mission.plasticKey] += retrievedCount;
+    console.log(plasticsCollected);
     await sleep(5000);
     executionScreen.style.display = 'none';
     if (retrievedCount < mission.numPieces) {
@@ -335,16 +339,40 @@ function hideConfirmationScreen() {
     confirmationScreen.style.display = 'none';
 }
 
+// prepareSummary
+// Parses the plasticsCollected object to identify the top 10 plastics
+// collected for this game and rank the collected plastics in order
+// for display on the statistics screen.
+function prepareSummary() {
+    let collectedPlastics = Object.entries(plasticsCollected);
+    collectedPlastics.sort(function(a, b) { 
+        return b[1] - a[1]
+    });
+    let topTenCollectedPlastics = [];
+    for (let i = 0; i < 10; i++) {
+        if (collectedPlastics[i][1] > 0) {
+            topTenCollectedPlastics[i] = collectedPlastics[i];
+        }
+    }
+    return topTenCollectedPlastics;
+}
+
 var statisticsScreen = document.getElementById('statisticsscreen');
 
 // displayStatisticsScreen
 // Display the game statistics to the player at the end of the game.
 async function displayStatisticsScreen() {
     statisticsScreen.style.display = 'grid';
+    const topTenPlasticsToDisplay = prepareSummary();
     // TODO: Logic to display Top 10 recovered plastic types and counts. 
-    // TODO: Reverse lookup from plasticsCollected keys to plasticType names.
-    document.getElementById('summary-plastic-type1').textContent = plasticsKeyToDisplayName[mission.plasticKey];
-    document.getElementById('summary-plastic-count1').textContent = plasticsCollected.PlasticBeverageBottles;
+    for (let i = 0; i < topTenPlasticsToDisplay.length; i++) {
+        if (topTenPlasticsToDisplay[i][1] > 0) {
+            let plasticTypeString = 'summary-plastic-type' + String(i + 1);
+            let plasticCountString = 'summary-plastic-count' + String(i + 1);
+            document.getElementById(plasticTypeString).textContent = plasticsKeyToDisplayName[topTenPlasticsToDisplay[i][0]];
+            document.getElementById(plasticCountString).textContent = topTenPlasticsToDisplay[i][1].toString();
+        }
+    }   
     await sleep(5000);
     statisticsScreen.style.display = 'none';
     displayPlayAgainScreen();
