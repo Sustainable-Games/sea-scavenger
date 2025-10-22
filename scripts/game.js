@@ -227,7 +227,6 @@ function displayMissionScreen() {
     document.getElementById('mission-num-pieces').textContent = mission.numPieces;
     document.getElementById('mission-plastic-type').textContent = plasticsKeyToDisplayName[mission.plasticKey];
     document.getElementById('plastic-product').textContent = productsKeyToDisplayName[mission.productKey];
-    // TODO: Determine how to access plastic and product image files from text in mission.
     document.getElementById('plastic-image').src = plasticsKeyToImageLink[mission.plasticKey];
     document.getElementById('product-image').src = productsKeyToImageLink[mission.productKey];
 }
@@ -288,16 +287,14 @@ var executionScreen = document.getElementById('missionexecutionscreen');
 // Display the mission execution screen and execute the mission for the country
 // selected by the player.
 async function executeMission(missionString) {
-    console.log(missionString);
+    console.log('mission string: ', missionString);
+    console.log('country: ', mission.countries[missionString]);
+    console.log('plasticsData: ', plasticsData[mission.plasticKey].countries);
     executionScreen.style.display = 'grid';
     let retrievedCount = mission.plasticsCount[missionString];
     document.getElementById('execution-num-pieces').textContent = mission.numPieces;
     document.getElementById('execution-plastic-type').textContent = plasticsKeyToDisplayName[mission.plasticKey];
     document.getElementById('execution-piece-count').textContent = retrievedCount;
-    // TODO: Need a lookup table from mission.plasticType to keys in plasticsCollected.
-    console.log(mission.plasticKey);
-    console.log(typeof(mission.plasticKey));
-    console.log(plasticsCollected[mission.plasticKey]);
     plasticsCollected[mission.plasticKey] += retrievedCount;
     console.log(plasticsCollected);
     await sleep(5000);
