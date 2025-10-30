@@ -58,6 +58,14 @@ var mission = {
         country5: '',
         country6: ''
     },
+    countryIndices: {
+        country1: 0,
+        country2: 0,
+        country3: 0,
+        country4: 0,
+        country5: 0,
+        country6: 0
+    },
     plasticsCount: {
         country1: 0,
         country2: 0,
@@ -99,7 +107,11 @@ var productsKeyToImageLink;
 // initGame
 // Load data files and any other actions needed to initialize gameplay.
 async function initGame() {
-    plasticsData = await getData('data/plastics.json');
+    if (DEBUG === true) {
+        plasticsData = await getData('data/plastics-test.json');
+    } else {
+        plasticsData = await getData('data/plastics.json');
+    }
     plasticsKeyToDisplayName = await getData('data/plastics-key-to-display-name.json');
     productsKeyToDisplayName = await getData('data/products-key-to-display-name.json');
     countryKeyToDisplayName = await getData('data/countries-key-to-display-name.json');
@@ -114,7 +126,11 @@ async function initGame() {
 // resetGame
 // Reset game when the player chooses to play again after the end of a game.
 async function resetGame() {
-    plasticsData = await getData('data/plastics.json');
+    if (DEBUG === true) {
+        plasticsData = await getData('data/plastics-test.json');
+    } else {
+        plasticsData = await getData('data/plastics.json');
+    }
     for (const plastic in plasticsCollected) {
         plasticsCollected[plastic] = 0;
     }
@@ -197,23 +213,29 @@ function generateIndices(arraySize, numIndices) {
 // Some of the countries will have a high likelihood of being able to achieve
 // the mission and the others will have a low likelihood, as determined by
 // parsing the plastics data.
-function generateMission () {
+async function generateMission () {
     mission.plasticsIndex = getRandomInt(plasticsData.length);
     mission.plasticKey = plasticsData[mission.plasticsIndex].plasticKey;
     mission.numPieces = plasticsData[mission.plasticsIndex].medianCount;
     mission.productKey = plasticsData[mission.plasticsIndex].productKeys[getRandomInt(plasticsData[mission.plasticsIndex].productKeys.length)];
     const countryIndices = generateIndices(6, plasticsData[mission.plasticsIndex].countries.length);
     mission.countries.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].countryKey;
+    mission.countryIndices.country1 = countryIndices[0];
     mission.plasticsCount.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].count;
     mission.countries.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].countryKey;
+    mission.countryIndices.country2 = countryIndices[1];
     mission.plasticsCount.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].count;
     mission.countries.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].countryKey;
+    mission.countryIndices.country3 = countryIndices[2];
     mission.plasticsCount.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].count;
     mission.countries.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].countryKey;
+    mission.countryIndices.country4 = countryIndices[3];
     mission.plasticsCount.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].count;
     mission.countries.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].countryKey;
+    mission.countryIndices.country5 = countryIndices[4];
     mission.plasticsCount.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].count;
     mission.countries.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].countryKey;
+    mission.countryIndices.country6 = countryIndices[5];
     mission.plasticsCount.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].count;
 }
 
@@ -289,7 +311,7 @@ var executionScreen = document.getElementById('missionexecutionscreen');
 async function executeMission(missionString) {
     console.log('mission string: ', missionString);
     console.log('country: ', mission.countries[missionString]);
-    console.log('plasticsData: ', plasticsData[mission.plasticKey].countries);
+    console.log('plasticsData: ', plasticsData[mission.plasticsIndex].countries);
     executionScreen.style.display = 'grid';
     let retrievedCount = mission.plasticsCount[missionString];
     document.getElementById('execution-num-pieces').textContent = mission.numPieces;
@@ -299,6 +321,13 @@ async function executeMission(missionString) {
     console.log(plasticsCollected);
     await sleep(5000);
     executionScreen.style.display = 'none';
+    if (DEBUG === true) {
+        console.log('country index: ', mission.countryIndices[missionString]);
+        const removedCountry = plasticsData[mission.plasticsIndex].countries.splice(mission.countryIndices[missionString], 1);
+        console.log('removed country: ', removedCountry);
+    } else {
+        plasticsData[mission.plasticsIndex].countries.splice(mission.countryIndices[missionString], 1);
+    }
     if (retrievedCount < mission.numPieces) {
         displayStatisticsScreen();
     } else {
