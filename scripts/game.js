@@ -80,6 +80,9 @@ var mission = {
 async function getData(fileName) {
     const response = await fetch(fileName);
 
+    if (DEBUG === true) {
+        console.log('getData complete');
+    }
     return response.json();
 }
 
@@ -118,8 +121,8 @@ async function initGame() {
     plasticsKeyToImageLink = await getData('data/plastics-key-to-image-link.json');
     productsKeyToImageLink = await getData('data/products-key-to-image-link.json');
     if (DEBUG === true) {
-        console.log('plasticsData = ', plasticsData);
         console.log('initGame complete');
+        console.log('plasticsData: ', plasticsData);
     }
 }
 
@@ -134,9 +137,10 @@ async function resetGame() {
     for (const plastic in plasticsCollected) {
         plasticsCollected[plastic] = 0;
     }
+    generateMission();
     if (DEBUG === true) {
-        console.log('plasticsData = ', plasticsData);
         console.log('resetGame complete');
+        console.log('plasticsData: ', plasticsData);
     }
 }
 
@@ -200,7 +204,8 @@ function generateIndices(arraySize, numIndices) {
         [indexArray[i], indexArray[j]] = [indexArray[j], indexArray[i]];
     }
     if (DEBUG === true) {
-        console.log('indexArray = ', indexArray);
+        console.log('generateIndices() complete.');
+        console.log('indexArray: ', indexArray);
     }
     return indexArray;
 }
@@ -213,7 +218,7 @@ function generateIndices(arraySize, numIndices) {
 // Some of the countries will have a high likelihood of being able to achieve
 // the mission and the others will have a low likelihood, as determined by
 // parsing the plastics data.
-async function generateMission () {
+function generateMission () {
     mission.plasticsIndex = getRandomInt(plasticsData.length);
     mission.plasticKey = plasticsData[mission.plasticsIndex].plasticKey;
     mission.numPieces = plasticsData[mission.plasticsIndex].medianCount;
@@ -237,6 +242,11 @@ async function generateMission () {
     mission.countries.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].countryKey;
     mission.countryIndices.country6 = countryIndices[5];
     mission.plasticsCount.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].count;
+
+    if (DEBUG === true) {
+        console.log('generateMission() complete.');
+        console.log('mission: ', mission);
+    }
 }
 
 var missionScreen = document.getElementById('missionscreen');
@@ -309,9 +319,11 @@ var executionScreen = document.getElementById('missionexecutionscreen');
 // Display the mission execution screen and execute the mission for the country
 // selected by the player.
 async function executeMission(missionString) {
-    console.log('mission string: ', missionString);
-    console.log('country: ', mission.countries[missionString]);
-    console.log('plasticsData: ', plasticsData[mission.plasticsIndex].countries);
+    if (DEBUG === true) {
+        console.log('mission string: ', missionString);
+        console.log('country: ', mission.countries[missionString]);
+        console.log('plasticsData: ', plasticsData[mission.plasticsIndex].countries);
+    }
     executionScreen.style.display = 'grid';
     let retrievedCount = mission.plasticsCount[missionString];
     document.getElementById('execution-num-pieces').textContent = mission.numPieces;
@@ -322,6 +334,7 @@ async function executeMission(missionString) {
     await sleep(5000);
     executionScreen.style.display = 'none';
     if (DEBUG === true) {
+        console.log('executeMission() complete.');
         console.log('country index: ', mission.countryIndices[missionString]);
         const removedCountry = plasticsData[mission.plasticsIndex].countries.splice(mission.countryIndices[missionString], 1);
         console.log('removed country: ', removedCountry);
@@ -380,6 +393,10 @@ function prepareSummary() {
             topTenCollectedPlastics[i] = collectedPlastics[i];
         }
     }
+    if (DEBUG === true) {
+        console.log('prepareSummary() complete.');
+        console.log('topTenCollectedPlastics: ', topTenCollectedPlastics);
+    }
     return topTenCollectedPlastics;
 }
 
@@ -390,7 +407,6 @@ var statisticsScreen = document.getElementById('statisticsscreen');
 async function displayStatisticsScreen() {
     statisticsScreen.style.display = 'grid';
     const topTenPlasticsToDisplay = prepareSummary();
-    // TODO: Logic to display Top 10 recovered plastic types and counts. 
     for (let i = 0; i < topTenPlasticsToDisplay.length; i++) {
         if (topTenPlasticsToDisplay[i][1] > 0) {
             let plasticTypeString = 'summary-plastic-type' + String(i + 1);
@@ -538,7 +554,6 @@ var playAgainYesButton = document.getElementById('play-again-yes-button');
 playAgainYesButton.addEventListener('click', event => {
     hidePlayAgainScreen();
     resetGame();
-    generateMission();
     displayMissionScreen();
 });
 
