@@ -224,24 +224,56 @@ function generateMission () {
     mission.numPieces = plasticsData[mission.plasticsIndex].medianCount;
     mission.productKey = plasticsData[mission.plasticsIndex].productKeys[getRandomInt(plasticsData[mission.plasticsIndex].productKeys.length)];
     const countryIndices = generateIndices(6, plasticsData[mission.plasticsIndex].countries.length);
-    mission.countries.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].countryKey;
     mission.countryIndices.country1 = countryIndices[0];
-    mission.plasticsCount.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].count;
-    mission.countries.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].countryKey;
+    if (countryIndices[0] === null) {
+        // This code should never execute as it would mean the country list is
+        // empty.
+        mission.countries.country1 = null;
+        mission.plasticsCount.country1 = 0;
+    } else {
+        mission.countries.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].countryKey;
+        mission.plasticsCount.country1 = plasticsData[mission.plasticsIndex].countries[countryIndices[0]].count;
+    }
     mission.countryIndices.country2 = countryIndices[1];
-    mission.plasticsCount.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].count;
-    mission.countries.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].countryKey;
+    if (countryIndices[1] === null) {
+        mission.countries.country2 = null;
+        mission.plasticsCount.country2 = 0;
+    } else {
+        mission.countries.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].countryKey;
+        mission.plasticsCount.country2 = plasticsData[mission.plasticsIndex].countries[countryIndices[1]].count;
+    }
     mission.countryIndices.country3 = countryIndices[2];
-    mission.plasticsCount.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].count;
-    mission.countries.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].countryKey;
+    if (countryIndices[2] === null) {
+        mission.countries.country3 = null;
+        mission.plasticsCount.country3 = 0;
+    } else {
+        mission.countries.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].countryKey;
+        mission.plasticsCount.country3 = plasticsData[mission.plasticsIndex].countries[countryIndices[2]].count;
+    }
     mission.countryIndices.country4 = countryIndices[3];
-    mission.plasticsCount.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].count;
-    mission.countries.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].countryKey;
+    if (countryIndices[3] === null) {
+        mission.countries.country4 = null;
+        mission.plasticsCount.country4 = 0;
+    } else {
+        mission.countries.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].countryKey;
+        mission.plasticsCount.country4 = plasticsData[mission.plasticsIndex].countries[countryIndices[3]].count;
+    }
     mission.countryIndices.country5 = countryIndices[4];
-    mission.plasticsCount.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].count;
-    mission.countries.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].countryKey;
+    if (countryIndices[4] === null) {
+        mission.countries.country5 = null;
+        mission.plasticsCount.country5 = 0;
+    } else {
+        mission.countries.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].countryKey;
+        mission.plasticsCount.country5 = plasticsData[mission.plasticsIndex].countries[countryIndices[4]].count;
+    }
     mission.countryIndices.country6 = countryIndices[5];
-    mission.plasticsCount.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].count;
+    if (countryIndices[5] === null) {
+        mission.countries.country6 = null;
+        mission.plasticsCount.country6 = 0;
+    } else {
+        mission.countries.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].countryKey;
+        mission.plasticsCount.country6 = plasticsData[mission.plasticsIndex].countries[countryIndices[5]].count;
+    }
 
     if (DEBUG === true) {
         console.log('generateMission() complete.');
@@ -290,12 +322,43 @@ function displayCountryScreen() {
     countryScreen.style.display = 'grid';
     document.getElementById('country-num-pieces').textContent = mission.numPieces;
     document.getElementById('country-plastic-type').textContent = plasticsKeyToDisplayName[mission.plasticKey];
-    document.getElementById('country-button-1').textContent = countryKeyToDisplayName[mission.countries.country1];
-    document.getElementById('country-button-2').textContent = countryKeyToDisplayName[mission.countries.country2];
-    document.getElementById('country-button-3').textContent = countryKeyToDisplayName[mission.countries.country3];
-    document.getElementById('country-button-4').textContent = countryKeyToDisplayName[mission.countries.country4];
-    document.getElementById('country-button-5').textContent = countryKeyToDisplayName[mission.countries.country5];
-    document.getElementById('country-button-6').textContent = countryKeyToDisplayName[mission.countries.country6];
+    if (mission.countries.country1 === null) {
+        // This code should never execute.
+        document.getElementById('country-button-1').style.visibility = 'hidden';
+    } else {
+        document.getElementById('country-button-1').style.visibility = 'visible';
+        document.getElementById('country-button-1').textContent = countryKeyToDisplayName[mission.countries.country1];
+    }
+    if (mission.countries.country2 === null) {
+        document.getElementById('country-button-2').style.visibility = 'hidden';
+    } else {
+        document.getElementById('country-button-2').style.visibility = 'visible';
+        document.getElementById('country-button-2').textContent = countryKeyToDisplayName[mission.countries.country2];
+    }
+    if (mission.countries.country3 === null) {
+        document.getElementById('country-button-3').style.visibility = 'hidden';
+    } else {
+        document.getElementById('country-button-3').style.visibility = 'visible';
+        document.getElementById('country-button-3').textContent = countryKeyToDisplayName[mission.countries.country3];
+    }
+    if (mission.countries.country4 === null) {
+        document.getElementById('country-button-4').style.visibility = 'hidden';
+    } else {
+        document.getElementById('country-button-4').style.visibility = 'visible';
+        document.getElementById('country-button-4').textContent = countryKeyToDisplayName[mission.countries.country4];
+    }
+    if (mission.countries.country5 === null) {
+        document.getElementById('country-button-5').style.visibility = 'hidden';
+    } else {
+        document.getElementById('country-button-5').style.visibility = 'visible';
+        document.getElementById('country-button-5').textContent = countryKeyToDisplayName[mission.countries.country5];
+    }
+    if (mission.countries.country6 === null) {
+        document.getElementById('country-button-6').style.visibility = 'hidden';
+    } else {
+        document.getElementById('country-button-6').style.visibility = 'visible';
+        document.getElementById('country-button-6').textContent = countryKeyToDisplayName[mission.countries.country6];
+    }
 }
 
 // hideCountryScreen

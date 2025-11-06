@@ -48,66 +48,6 @@
                 "rank" : 4
             },
             { 
-                "countryKey" : "GH",
-                "count" : 249266,
-                "rank" : 5
-            },
-            { 
-                "countryKey" : "EC",
-                "count" : 187963,
-                "rank" : 6
-            },
-            { 
-                "countryKey" : "CE",
-                "count" : 179539,
-                "rank" : 7
-            },
-            { 
-                "countryKey" : "CH",
-                "count" : 164406,
-                "rank" : 8
-            },
-            { 
-                "countryKey" : "MY",
-                "count" : 150655,
-                "rank" : 9
-            },
-            { 
-                "countryKey" : "PM",
-                "count" : 132322,
-                "rank" : 10
-            },
-            { 
-                "countryKey" : "KE",
-                "count" : 103602,
-                "rank" : 11
-            },
-            { 
-                "countryKey" : "TD",
-                "count" : 93476,
-                "rank" : 12
-            },
-            { 
-                "countryKey" : "GT",
-                "count" : 86594,
-                "rank" : 13
-            },
-            { 
-                "countryKey" : "VE",
-                "count" : 86535,
-                "rank" : 14
-            },
-            { 
-                "countryKey" : "RQ",
-                "count" : 86191,
-                "rank" : 15
-            },
-            { 
-                "countryKey" : "IN",
-                "count" : 76491,
-                "rank" : 16
-            },
-            { 
                 "countryKey" : "DR",
                 "count" : 66252,
                 "rank" : 17
